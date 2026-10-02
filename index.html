@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para My Lady 🌻❤️</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        .font-serif-custom {
+            font-family: 'Great Vibes', cursive;
+        }
+        .font-handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+        .font-body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1f080c 0%, #3b0d18 35%, #2a0812 70%, #150307 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(35, 12, 18, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(225, 112, 85, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Ambient Glow Effect */
+        .flower-glow {
+            filter: drop-shadow(0 0 25px rgba(225, 29, 72, 0.45));
+        }
+
+        /* Floating Animation */
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        .animate-gentle-float {
+            animation: gentleFloat 6s ease-in-out infinite;
+        }
+
+        /* Falling Petals and Hearts Background Animation */
+        @keyframes floatDown {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.8;
+            }
+            85% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .falling-item {
+            position: absolute;
+            top: -10vh;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatDown linear infinite;
+        }
+
+        .modal-active {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="font-body text-rose-100 flex flex-col justify-between items-center min-h-screen relative p-4 sm:p-6 select-none">
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112181.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Background Falling Layer -->
+    <div id="falling-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- Music Player Controls Header -->
+    <header class="w-full max-w-xl z-10 flex justify-between items-center mb-4 sm:mb-6 pt-2">
+        <div class="flex items-center gap-3 glass-card px-4 py-2 rounded-full border border-rose-900/40">
+            <button onclick="toggleMusic()" class="w-10 h-10 rounded-full bg-rose-800/80 hover:bg-rose-700 text-rose-100 flex items-center justify-center transition-all duration-300 shadow-md transform active:scale-95">
+                <i id="music-icon" class="fa-solid fa-music text-lg"></i>
+            </button>
+            <div class="flex flex-col">
+                <span class="text-xs text-rose-300 font-medium">Un momento para ti</span>
+                <span id="music-status" class="text-xs text-rose-100/80">Haz clic para escuchar 🎵</span>
+            </div>
+        </div>
+
+        <label class="cursor-pointer glass-card px-3 py-2 rounded-full text-xs text-rose-300 hover:text-rose-100 transition-colors duration-300 flex items-center gap-2 border border-rose-900/40" title="Cambiar canción mp3">
+            <i class="fa-solid fa-upload"></i>
+            <span class="hidden sm:inline">Tu canción</span>
+            <input type="file" id="audio-file" accept="audio/*" class="hidden" onchange="loadCustomAudio(event)">
+        </label>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-xl z-10 flex flex-col items-center my-auto py-2">
+        
+        <!-- Header Title -->
+        <div class="text-center mb-6 sm:mb-8">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-rose-950/80 border border-rose-800/50 text-rose-300 text-xs sm:text-sm font-medium mb-3 tracking-wide shadow-lg">
+                ✨ Especialmente para ti ✨
+            </span>
+            <h1 class="font-serif-custom text-5xl sm:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-rose-100 to-red-400 drop-shadow-md py-1">
+                Para My Lady
+            </h1>
+            <p class="font-handwriting text-xl sm:text-2xl text-rose-200/90 mt-1">
+                Nunca olvides lo grandiosa y fuerte que eres 🌻❤️
+            </p>
+        </div>
+
+        <!-- Red Sunflowers Bouquet SVG Container -->
+        <div class="relative w-full max-w-md aspect-square flex items-center justify-center my-2 animate-gentle-float">
+            <!-- Background Glow behind Flowers -->
+            <div class="absolute w-72 h-72 bg-gradient-to-tr from-rose-900/40 via-red-600/20 to-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Highly Detailed Red Sunflowers SVG -->
+            <svg class="w-full h-full flower-glow cursor-pointer transition-transform duration-500 hover:scale-105" viewBox="0 0 500 550" onclick="triggerConfetti()" title="Haz clic en los girasoles">
+                <defs>
+                    <!-- Red Sunflower Petal Gradients -->
+                    <linearGradient id="red-petal-main" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ff3b5c" />
+                        <stop offset="40%" stop-color="#d90429" />
+                        <stop offset="85%" stop-color="#7a0010" />
+                        <stop offset="100%" stop-color="#400007" />
+                    </linearGradient>
+
+                    <linearGradient id="red-petal-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ff6b81" />
+                        <stop offset="50%" stop-color="#b7094c" />
+                        <stop offset="100%" stop-color="#520008" />
+                    </linearGradient>
+
+                    <!-- Center Seed Disk Gradients -->
+                    <radialGradient id="sunflower-center" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#1a0003" />
+                        <stop offset="60%" stop-color="#3d0c11" />
+                        <stop offset="85%" stop-color="#7a121d" />
+                        <stop offset="100%" stop-color="#d4af37" />
+                    </radialGradient>
+
+                    <!-- Stem & Leaf Gradients -->
+                    <linearGradient id="stem-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#2d6a4f" />
+                        <stop offset="50%" stop-color="#52b788" />
+                        <stop offset="100%" stop-color="#1b4332" />
+                    </linearGradient>
+
+                    <linearGradient id="leaf-grad-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#40916c" />
+                        <stop offset="50%" stop-color="#1b4332" />
+                        <stop offset="100%" stop-color="#081c15" />
+                    </linearGradient>
+
+                    <!-- Satin Ribbon Gradient -->
+                    <linearGradient id="ribbon-grad-3" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ff758f" />
+                        <stop offset="50%" stop-color="#c9184a" />
+                        <stop offset="100%" stop-color="#59000a" />
+                    </linearGradient>
+
+                    <!-- Reusable Petal Shape -->
+                    <path id="sf-petal" d="M 0 0 C -12 -35, -10 -75, 0 -95 C 10 -75, 12 -35, 0 0 Z" fill="url(#red-petal-main)" />
+                    <path id="sf-petal-sub" d="M 0 0 C -9 -30, -7 -65, 0 -85 C 7 -65, 9 -30, 0 0 Z" fill="url(#red-petal-accent)" />
+                </defs>
+
+                <!-- Stems -->
+                <g id="stems-group">
+                    <!-- Left Stem -->
+                    <path d="M 210 260 C 220 340, 235 410, 235 480" fill="none" stroke="url(#stem-grad-3)" stroke-width="12" stroke-linecap="round" />
+                    <!-- Center Stem -->
+                    <path d="M 250 240 C 250 330, 250 420, 250 485" fill="none" stroke="url(#stem-grad-3)" stroke-width="14" stroke-linecap="round" />
+                    <!-- Right Stem -->
+                    <path d="M 290 260 C 280 340, 265 410, 265 480" fill="none" stroke="url(#stem-grad-3)" stroke-width="12" stroke-linecap="round" />
+                </g>
+
+                <!-- Natural Broad Sunflower Leaves -->
+                <g id="leaves-group">
+                    <!-- Left Leaf -->
+                    <path d="M 225 390 C 150 380, 110 300, 130 230 C 170 280, 200 350, 230 385 Z" fill="url(#leaf-grad-3)" />
+                    <path d="M 225 390 C 180 340, 140 280, 130 230" fill="none" stroke="#52b788" stroke-width="2" opacity="0.6" />
+                    
+                    <!-- Right Leaf -->
+                    <path d="M 275 390 C 350 380, 390 300, 370 230 C 330 280, 300 350, 270 385 Z" fill="url(#leaf-grad-3)" />
+                    <path d="M 275 390 C 320 340, 360 280, 370 230" fill="none" stroke="#52b788" stroke-width="2" opacity="0.6" />
+                </g>
+
+                <!-- LEFT RED SUNFLOWER -->
+                <g transform="translate(180, 210) scale(0.85)">
+                    <!-- Outer Petal Ring -->
+                    <g>
+                        <use href="#sf-petal" transform="rotate(0)" />
+                        <use href="#sf-petal" transform="rotate(22.5)" />
+                        <use href="#sf-petal" transform="rotate(45)" />
+                        <use href="#sf-petal" transform="rotate(67.5)" />
+                        <use href="#sf-petal" transform="rotate(90)" />
+                        <use href="#sf-petal" transform="rotate(112.5)" />
+                        <use href="#sf-petal" transform="rotate(135)" />
+                        <use href="#sf-petal" transform="rotate(157.5)" />
+                        <use href="#sf-petal" transform="rotate(180)" />
+                        <use href="#sf-petal" transform="rotate(202.5)" />
+                        <use href="#sf-petal" transform="rotate(225)" />
+                        <use href="#sf-petal" transform="rotate(247.5)" />
+                        <use href="#sf-petal" transform="rotate(270)" />
+                        <use href="#sf-petal" transform="rotate(292.5)" />
+                        <use href="#sf-petal" transform="rotate(315)" />
+                        <use href="#sf-petal" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Inner Petal Ring -->
+                    <g transform="scale(0.88) rotate(11.25)">
+                        <use href="#sf-petal-sub" transform="rotate(0)" />
+                        <use href="#sf-petal-sub" transform="rotate(22.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(45)" />
+                        <use href="#sf-petal-sub" transform="rotate(67.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(90)" />
+                        <use href="#sf-petal-sub" transform="rotate(112.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(135)" />
+                        <use href="#sf-petal-sub" transform="rotate(157.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(180)" />
+                        <use href="#sf-petal-sub" transform="rotate(202.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(225)" />
+                        <use href="#sf-petal-sub" transform="rotate(247.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(270)" />
+                        <use href="#sf-petal-sub" transform="rotate(292.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(315)" />
+                        <use href="#sf-petal-sub" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Center Seed Disk -->
+                    <circle cx="0" cy="0" r="38" fill="url(#sunflower-center)" />
+                    <circle cx="0" cy="0" r="38" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="3,3" opacity="0.8" />
+                </g>
+
+                <!-- RIGHT RED SUNFLOWER -->
+                <g transform="translate(320, 210) scale(0.85)">
+                    <!-- Outer Petal Ring -->
+                    <g>
+                        <use href="#sf-petal" transform="rotate(0)" />
+                        <use href="#sf-petal" transform="rotate(22.5)" />
+                        <use href="#sf-petal" transform="rotate(45)" />
+                        <use href="#sf-petal" transform="rotate(67.5)" />
+                        <use href="#sf-petal" transform="rotate(90)" />
+                        <use href="#sf-petal" transform="rotate(112.5)" />
+                        <use href="#sf-petal" transform="rotate(135)" />
+                        <use href="#sf-petal" transform="rotate(157.5)" />
+                        <use href="#sf-petal" transform="rotate(180)" />
+                        <use href="#sf-petal" transform="rotate(202.5)" />
+                        <use href="#sf-petal" transform="rotate(225)" />
+                        <use href="#sf-petal" transform="rotate(247.5)" />
+                        <use href="#sf-petal" transform="rotate(270)" />
+                        <use href="#sf-petal" transform="rotate(292.5)" />
+                        <use href="#sf-petal" transform="rotate(315)" />
+                        <use href="#sf-petal" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Inner Petal Ring -->
+                    <g transform="scale(0.88) rotate(11.25)">
+                        <use href="#sf-petal-sub" transform="rotate(0)" />
+                        <use href="#sf-petal-sub" transform="rotate(22.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(45)" />
+                        <use href="#sf-petal-sub" transform="rotate(67.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(90)" />
+                        <use href="#sf-petal-sub" transform="rotate(112.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(135)" />
+                        <use href="#sf-petal-sub" transform="rotate(157.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(180)" />
+                        <use href="#sf-petal-sub" transform="rotate(202.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(225)" />
+                        <use href="#sf-petal-sub" transform="rotate(247.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(270)" />
+                        <use href="#sf-petal-sub" transform="rotate(292.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(315)" />
+                        <use href="#sf-petal-sub" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Center Seed Disk -->
+                    <circle cx="0" cy="0" r="38" fill="url(#sunflower-center)" />
+                    <circle cx="0" cy="0" r="38" fill="none" stroke="#d4af37" stroke-width="2" stroke-dasharray="3,3" opacity="0.8" />
+                </g>
+
+                <!-- CENTER MAIN RED SUNFLOWER (Largest) -->
+                <g transform="translate(250, 160) scale(1.1)">
+                    <!-- Outer Petal Ring -->
+                    <g>
+                        <use href="#sf-petal" transform="rotate(0)" />
+                        <use href="#sf-petal" transform="rotate(22.5)" />
+                        <use href="#sf-petal" transform="rotate(45)" />
+                        <use href="#sf-petal" transform="rotate(67.5)" />
+                        <use href="#sf-petal" transform="rotate(90)" />
+                        <use href="#sf-petal" transform="rotate(112.5)" />
+                        <use href="#sf-petal" transform="rotate(135)" />
+                        <use href="#sf-petal" transform="rotate(157.5)" />
+                        <use href="#sf-petal" transform="rotate(180)" />
+                        <use href="#sf-petal" transform="rotate(202.5)" />
+                        <use href="#sf-petal" transform="rotate(225)" />
+                        <use href="#sf-petal" transform="rotate(247.5)" />
+                        <use href="#sf-petal" transform="rotate(270)" />
+                        <use href="#sf-petal" transform="rotate(292.5)" />
+                        <use href="#sf-petal" transform="rotate(315)" />
+                        <use href="#sf-petal" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Inner Petal Ring -->
+                    <g transform="scale(0.88) rotate(11.25)">
+                        <use href="#sf-petal-sub" transform="rotate(0)" />
+                        <use href="#sf-petal-sub" transform="rotate(22.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(45)" />
+                        <use href="#sf-petal-sub" transform="rotate(67.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(90)" />
+                        <use href="#sf-petal-sub" transform="rotate(112.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(135)" />
+                        <use href="#sf-petal-sub" transform="rotate(157.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(180)" />
+                        <use href="#sf-petal-sub" transform="rotate(202.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(225)" />
+                        <use href="#sf-petal-sub" transform="rotate(247.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(270)" />
+                        <use href="#sf-petal-sub" transform="rotate(292.5)" />
+                        <use href="#sf-petal-sub" transform="rotate(315)" />
+                        <use href="#sf-petal-sub" transform="rotate(337.5)" />
+                    </g>
+                    <!-- Center Seed Disk -->
+                    <circle cx="0" cy="0" r="42" fill="url(#sunflower-center)" />
+                    <circle cx="0" cy="0" r="42" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-dasharray="4,3" opacity="0.9" />
+                </g>
+
+                <!-- Satin Ribbon Tied around Stems -->
+                <g id="ribbon-group" transform="translate(250, 425)">
+                    <!-- Bow Tails -->
+                    <path d="M -5 10 Q -25 40 -40 70 Q -20 65 0 20" fill="url(#ribbon-grad-3)" />
+                    <path d="M 5 10 Q 25 40 40 70 Q 20 65 0 20" fill="url(#ribbon-grad-3)" />
+                    <!-- Bow Loops -->
+                    <path d="M 0 0 C -35 -22, -55 0, -5 12 Z" fill="url(#ribbon-grad-3)" />
+                    <path d="M 0 0 C 35 -22, 55 0, 5 12 Z" fill="url(#ribbon-grad-3)" />
+                    <!-- Bow Center Knot -->
+                    <ellipse cx="0" cy="5" rx="8" ry="7" fill="#ff4d6d" stroke="#520008" stroke-width="1.5" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- Action Button to Open Letter -->
+        <div class="mt-4 sm:mt-6 text-center">
+            <button onclick="openLetterModal()" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-rose-700 via-rose-600 to-red-600 text-white font-medium text-lg shadow-xl hover:shadow-rose-700/50 hover:scale-105 active:scale-95 transition-all duration-300 border border-rose-400/30">
+                <i class="fa-solid fa-envelope-open-text text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+                <span>Abrir carta para ti</span>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500"></span>
+                </span>
+            </button>
+            <p class="text-xs text-rose-300/70 mt-3 font-light">Toca los girasoles o abre la carta ✨</p>
+        </div>
+
+    </main>
+
+    <!-- Modal Letter / Message Box -->
+    <div id="letter-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="glass-card w-full max-w-lg rounded-2xl p-6 sm:p-8 relative transform scale-90 transition-transform duration-500 border border-rose-500/30 text-rose-100 max-h-[90vh] overflow-y-auto" id="modal-content">
+            
+            <!-- Close Button -->
+            <button onclick="closeLetterModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-rose-950/80 hover:bg-rose-800 text-rose-200 flex items-center justify-center transition-colors duration-300 border border-rose-700/50">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Letter Content -->
+            <div class="text-center mb-6">
+                <span class="text-3xl">🌻</span>
+                <h2 class="font-serif-custom text-4xl sm:text-5xl text-rose-200 mt-1">Para My Lady</h2>
+                <div class="w-16 h-0.5 bg-gradient-to-r from-transparent via-rose-500 to-transparent mx-auto mt-2"></div>
+            </div>
+
+            <div class="space-y-4 font-body text-sm sm:text-base leading-relaxed text-rose-100/95 font-light text-justify">
+                <p>
+                    Sé que en este momento estás atravesando días difíciles y momentos llenos de grandes obstáculos. Sin embargo, quiero recordarte algo que jamás debes olvidar: <strong class="font-semibold text-rose-300">eres una mujer increíblemente fuerte, capaz y grandiosa.</strong>
+                </p>
+                <p>
+                    Ninguna tormenta es permanente, y no hay desafío lo suficientemente grande como para apagar esa luz y determinación tan bella que hay en ti. Tengo una fe ciega en tu capacidad de salir adelante y confío completamente en ti, incluso cuando tú misma llegues a dudar.
+                </p>
+                <p>
+                    No estás sola en esto. Siempre estaré aquí para apoyarte, sostener tu mano y recordarte lo valiosa que eres en cada paso del camino.
+                </p>
+            </div>
+
+            <!-- Signature -->
+            <div class="mt-8 text-right font-handwriting text-2xl sm:text-3xl text-rose-300 pr-2">
+                Atte: Tu 🐱
+            </div>
+
+            <!-- Modal Footer Button -->
+            <div class="mt-8 text-center">
+                <button onclick="closeLetterModal(); triggerConfetti();" class="px-6 py-2.5 rounded-full bg-rose-800/80 hover:bg-rose-700 text-rose-100 text-sm font-medium transition-all duration-300 border border-rose-600/40 shadow-lg">
+                    ¡Eres capaz de todo! ❤️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Interactions -->
+    <script>
+        // Music Controls
+        let isPlaying = false;
+        const audio = document.getElementById('bg-music');
+        const musicIcon = document.getElementById('music-icon');
+        const musicStatus = document.getElementById('music-status');
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicIcon.className = 'fa-solid fa-music text-lg';
+                musicStatus.innerText = 'Haz clic para escuchar 🎵';
+                isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    musicIcon.className = 'fa-solid fa-pause text-lg';
+                    musicStatus.innerText = 'Sonando para ti 🌻';
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log("Audio play blocked:", err);
+                });
+            }
+        }
+
+        function loadCustomAudio(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const objectUrl = URL.createObjectURL(file);
+                audio.src = objectUrl;
+                audio.play();
+                musicIcon.className = 'fa-solid fa-pause text-lg';
+                musicStatus.innerText = 'Reproduciendo tu tema 🎵';
+                isPlaying = true;
+            }
+        }
+
+        // Falling Petals & Elements Logic
+        const container = document.getElementById('falling-container');
+        const items = ['🌻', '❤️', '✨', '🌸', '💫', '🌹'];
+
+        function createFallingItem() {
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            item.innerText = items[Math.floor(Math.random() * items.length)];
+            
+            // Random properties
+            const startLeft = Math.random() * 100; // 0vw to 100vw
+            const duration = 6 + Math.random() * 8; // 6s to 14s
+            const size = 0.8 + Math.random() * 1.2; // scale
+
+            item.style.left = startLeft + 'vw';
+            item.style.animationDuration = duration + 's';
+            item.style.fontSize = (size * 1.2) + 'rem';
+            item.style.opacity = Math.random() * 0.7 + 0.3;
+
+            container.appendChild(item);
+
+            // Clean up elements after animation finishes
+            setTimeout(() => {
+                item.remove();
+            }, duration * 1000);
+        }
+
+        // Generate falling elements periodically
+        setInterval(createFallingItem, 450);
+
+        // Confetti Effect for Flowers
+        function triggerConfetti() {
+            confetti({
+                particleCount: 70,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#ff3b5c', '#d90429', '#ff85a1', '#d4af37', '#7a0010']
+            });
+        }
+
+        // Modal Controls
+        const modal = document.getElementById('letter-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        function openLetterModal() {
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('opacity-100');
+            modalContent.classList.remove('scale-90');
+            modalContent.classList.add('scale-100');
+            document.body.classList.add('modal-active');
+
+            // Autoplay music if not playing yet
+            if (!isPlaying) {
+                toggleMusic();
+            }
+
+            triggerConfetti();
+        }
+
+        function closeLetterModal() {
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.classList.remove('opacity-100');
+            modalContent.classList.add('scale-90');
+            modalContent.classList.remove('scale-100');
+            document.body.classList.remove('modal-active');
+        }
+
+        // Close modal on outside click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeLetterModal();
+            }
+        });
+    </script>
+</body>
+</html>
